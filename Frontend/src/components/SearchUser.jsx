@@ -30,54 +30,51 @@ const SearchUser = ({ onClose }) => {
     handleSearchUser();
   }, [search]);
 
-  console.log("searchUser", searchUser);
   return (
-    <div className="fixed top-0 bottom-0 left-0 right-0 bg-slate-700 bg-opacity-40 p-2 z-10">
-      <div className="w-full max-w-lg mx-auto mt-10">
-        {/**input search user */}
-        <div className="bg-white rounded h-14 overflow-hidden flex ">
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center p-4">
+      <div className="relative w-full max-w-xl bg-white rounded-xl shadow-xl overflow-hidden max-h-[90vh] flex flex-col">
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-2xl"
+          aria-label="Close"
+        >
+          <IoClose />
+        </button>
+
+        {/* Search Input */}
+        <div className="flex items-center border-b px-4 py-3 gap-2">
+          <IoSearchOutline size={22} className="text-slate-500" />
           <input
             type="text"
-            placeholder="Search user by name, email...."
-            className="w-full outline-none py-1 h-full px-4"
+            placeholder="Search by name or email..."
+            className="w-full outline-none text-base bg-transparent"
             onChange={(e) => setSearch(e.target.value)}
             value={search}
           />
-          <div className="h-14 w-14 flex justify-center items-center">
-            <IoSearchOutline size={25} />
-          </div>
         </div>
 
-        {/**display search user */}
-        <div className="bg-white mt-2 w-full p-4 rounded h-full max-h-[70vh] overflow-auto">
-          {/**no user found */}
-          {searchUser.length === 0 && !loading && (
-            <p className="text-center text-slate-500">no user found!</p>
-          )}
-
+        {/* Results Area */}
+        <div className="p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent flex-1">
+          {/* Loading State */}
           {loading && (
-            <div className="flex justify-center">
+            <div className="flex justify-center items-center h-32">
               <Loading />
             </div>
           )}
 
-          {searchUser.length !== 0 &&
-            !loading &&
-            searchUser.map((user, index) => {
-              return (
-                <UserSearchCard key={user._id} user={user} onClose={onClose} />
-              );
-            })}
-        </div>
-      </div>
+          {/* No User Found */}
+          {!loading && searchUser.length === 0 && (
+            <p className="text-center text-slate-400">No user found!</p>
+          )}
 
-      <div
-        className="absolute top-0 right-0 text-2xl p-2 lg:text-4xl hover:text-white"
-        onClick={onClose}
-      >
-        <button>
-          <IoClose />
-        </button>
+          {/* User List */}
+          {!loading &&
+            searchUser.length > 0 &&
+            searchUser.map((user) => (
+              <UserSearchCard key={user._id} user={user} onClose={onClose} />
+            ))}
+        </div>
       </div>
     </div>
   );

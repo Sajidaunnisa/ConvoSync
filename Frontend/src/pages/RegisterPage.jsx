@@ -30,7 +30,6 @@ const RegisterPage = () => {
     const file = e.target.files[0];
 
     const uploadPhoto = await uploadFile(file);
-    console.log(uploadPhoto);
 
     setUploadPhoto(file);
 
@@ -55,7 +54,6 @@ const RegisterPage = () => {
 
     try {
       const response = await axios.post(URL, data);
-      console.log("response", response);
 
       toast.success(response.data.message);
 
@@ -72,32 +70,35 @@ const RegisterPage = () => {
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
-    console.log("data", data);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex items-center justify-center px-4">
-      <div className="bg-white w-full max-w-4xl rounded-3xl shadow-lg overflow-hidden grid md:grid-cols-2 m-3">
-        {/* Left Section (Optional Logo or Welcome Text) */}
-        <div className="hidden md:flex flex-col justify-center items-center bg-primary text-white px-6 py-10">
-          <h2 className="text-3xl font-bold mb-4">Join ConvoSync</h2>
+    <div className="min-h-screen bg-[#f4f0fa] dark:bg-[#0f172a] flex items-center justify-center px-4">
+      <div className="bg-[#fefcff] dark:bg-[#1e293b] w-full max-w-4xl rounded-3xl shadow-xl overflow-hidden grid md:grid-cols-2 m-3">
+        {/* Left Section */}
+        <div className="hidden md:flex flex-col justify-center items-center bg-[#1e293b] text-white px-6 py-10">
+          <h2 className="text-3xl font-bold mb-4 text-purple-500">
+            Join ConvoSync
+          </h2>
           <p className="text-center text-lg">
             Start your journey with us. Collaborate, chat, and connect
             instantly.
           </p>
-          {/* You can replace below with a logo or image if preferred */}
         </div>
 
         {/* Right Section - Form */}
         <div className="p-8 sm:p-10">
-          <h3 className="text-center text-2xl font-semibold text-primary">
+          <h3 className="text-center text-2xl font-semibold text-purple-500 dark:text-indigo-400">
             Create Account
           </h3>
 
           <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
             {/* Name Field */}
             <div>
-              <label htmlFor="name" className="block font-medium mb-1">
+              <label
+                htmlFor="name"
+                className="block font-medium mb-1 text-gray-700 dark:text-gray-200"
+              >
                 Name
               </label>
               <input
@@ -105,7 +106,7 @@ const RegisterPage = () => {
                 id="name"
                 name="name"
                 placeholder="John Doe"
-                className="w-full border rounded px-3 py-2 bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full border border-[#e0d4f5] dark:border-gray-600 rounded px-3 py-2 bg-[#f7f5fb] dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
                 value={data.name}
                 onChange={handleOnChange}
                 required
@@ -114,7 +115,10 @@ const RegisterPage = () => {
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block font-medium mb-1">
+              <label
+                htmlFor="email"
+                className="block font-medium mb-1 text-gray-700 dark:text-gray-200"
+              >
                 Email
               </label>
               <input
@@ -122,7 +126,7 @@ const RegisterPage = () => {
                 id="email"
                 name="email"
                 placeholder="john@example.com"
-                className="w-full border rounded px-3 py-2 bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full border border-[#e0d4f5] dark:border-gray-600 rounded px-3 py-2 bg-[#f7f5fb] dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
                 value={data.email}
                 onChange={handleOnChange}
                 required
@@ -131,7 +135,10 @@ const RegisterPage = () => {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block font-medium mb-1">
+              <label
+                htmlFor="password"
+                className="block font-medium mb-1 text-gray-700 dark:text-gray-200"
+              >
                 Password
               </label>
               <input
@@ -139,7 +146,7 @@ const RegisterPage = () => {
                 id="password"
                 name="password"
                 placeholder="********"
-                className="w-full border rounded px-3 py-2 bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full border border-[#e0d4f5] dark:border-gray-600 rounded px-3 py-2 bg-[#f7f5fb] dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
                 value={data.password}
                 onChange={handleOnChange}
                 required
@@ -148,14 +155,17 @@ const RegisterPage = () => {
 
             {/* Profile Picture Upload */}
             <div>
-              <label htmlFor="profile_pic" className="block font-medium mb-1">
+              <label
+                htmlFor="profile_pic"
+                className="block font-medium mb-1 text-gray-700 dark:text-gray-200"
+              >
                 Profile Photo
               </label>
               <label
                 htmlFor="profile_pic"
-                className="flex items-center justify-between bg-slate-200 border rounded px-3 py-2 cursor-pointer hover:border-primary"
+                className="flex items-center justify-between bg-[#eee6fa] dark:bg-gray-700 border border-[#e0d4f5] dark:border-gray-600 rounded px-3 py-2 cursor-pointer hover:border-purple-400 dark:hover:border-indigo-400"
               >
-                <span className="truncate text-sm">
+                <span className="truncate text-sm text-gray-700 dark:text-gray-200">
                   {uploadPhoto?.name || "Upload your Profile pic"}
                 </span>
                 {uploadPhoto?.name && (
@@ -180,17 +190,17 @@ const RegisterPage = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-primary text-white py-2 rounded-lg text-lg font-semibold hover:bg-secondary transition-colors"
+              className="w-full bg-purple-400 dark:bg-indigo-500 text-white py-2 rounded-lg text-lg font-semibold hover:bg-purple-500 dark:hover:bg-indigo-600 transition-colors"
             >
               Register
             </button>
           </form>
 
-          <p className="text-center text-sm mt-6">
+          <p className="text-center text-sm mt-6 text-gray-700 dark:text-gray-300">
             Already have an account?{" "}
             <Link
               to="/email"
-              className="text-primary font-medium hover:underline"
+              className="text-purple-500 dark:text-indigo-400 font-medium hover:underline"
             >
               Login
             </Link>

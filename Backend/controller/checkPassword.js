@@ -38,11 +38,20 @@ async function checkPassword(request, response) {
       sameSite: "Lax",
     };
 
-    return response.cookie("token", token, cookieOptions).status(200).json({
-      message: "Login Successfully",
-      token: token,
-      success: true,
-    });
+    return response
+      .cookie("token", token, cookieOptions)
+      .status(200)
+      .json({
+        message: "Login Successfully",
+        token: token,
+        success: true,
+        data: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          profile_pic: user.profile_pic,
+        },
+      });
   } catch (error) {
     return response.status(500).json({
       message: error.message || error,

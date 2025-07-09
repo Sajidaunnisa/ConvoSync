@@ -10,11 +10,13 @@ const getUserDetailsFromToken = async (token) => {
       };
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
     const user = await UserModel.findById(decoded.id).select("-password");
 
     return user;
   } catch (error) {
+    console.error("Token verification failed:", error.message);
     return {
       message: "Invalid or expired token",
       logout: true,

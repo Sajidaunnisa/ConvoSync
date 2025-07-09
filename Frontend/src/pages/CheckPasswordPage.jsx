@@ -66,42 +66,52 @@ const CheckPasswordPage = () => {
   };
 
   return (
-    <div className="mt-5">
-      <div className="bg-white w-full max-w-md  rounded overflow-hidden p-4 mx-auto">
-        <div className="w-fit mx-auto mb-2 flex justify-center items-center flex-col">
+    <div className="mt-10 px-4">
+      <div className="bg-[#fdf9ff] dark:bg-[#1e293b] w-full max-w-md rounded-2xl overflow-hidden shadow-xl p-6 mx-auto border border-[#e7d9f5] dark:border-gray-700">
+        {/* Profile */}
+        <div className="w-fit mx-auto mb-4 flex justify-center items-center flex-col">
           <Avatar
             width={70}
             height={70}
             name={location?.state?.name}
             imageUrl={location?.state?.profile_pic}
           />
-          <h2 className="font-semibold text-lg mt-1">
+          <h2 className="font-semibold text-xl mt-2 dark:text-indigo-300">
             {location?.state?.name}
           </h2>
         </div>
 
-        <form className="grid gap-4 mt-3" onSubmit={handleSubmit}>
+        {/* Form */}
+        <form className="grid gap-5 mt-4" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-1">
-            <label htmlFor="password">Password :</label>
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Password
+            </label>
             <input
               type="password"
               id="password"
               name="password"
               placeholder="Enter your password"
-              className="bg-slate-100 px-2 py-1 focus:outline-primary"
+              className="w-full px-3 py-2 rounded-lg bg-[#f3edf9] dark:bg-gray-700 text-gray-800 dark:text-white border border-[#d8c7f0] dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-400"
               value={data.password}
               onChange={handleOnChange}
               required
             />
           </div>
 
-          <button className="bg-primary text-lg  px-4 py-1 hover:bg-secondary rounded mt-2 font-bold text-white leading-relaxed tracking-wide">
+          <button
+            type="submit"
+            className="w-full bg-purple-500 hover:bg-purple-600 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white text-lg font-semibold py-2 rounded-lg transition duration-200"
+          >
             Login
           </button>
         </form>
 
-        <p className="my-3 text-center hover:text-primary font-semibold">
-          Forgot password ?
+        <p className="my-4 text-center text-sm font-medium dark:text-indigo-400 hover:underline cursor-pointer">
+          Forgot password?
         </p>
       </div>
     </div>

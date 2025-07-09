@@ -7,7 +7,7 @@ import { FaAngleLeft, FaPlus, FaImage, FaVideo } from "react-icons/fa6";
 import uploadFile from "../helpers/uploadFile";
 import { IoClose } from "react-icons/io5";
 import Loading from "./Loading";
-import backgroundImage from "../assets/wallpaper.jpeg";
+import backgroundImage from "../assets/wallpaper2.jpg";
 import { IoMdSend } from "react-icons/io";
 import moment from "moment";
 
@@ -98,19 +98,25 @@ const MessagePage = () => {
   useEffect(() => {
     if (socketConnection) {
       socketConnection.emit("message-page", params.userId);
-
       socketConnection.emit("seen", params.userId);
 
-      socketConnection.on("message-user", (data) => {
+      const handleMessageUser = (data) => {
         setDataUser(data);
-      });
+      };
 
-      socketConnection.on("message", (data) => {
-        console.log("message data", data);
+      const handleMessages = (data) => {
         setAllMessage(data);
-      });
+      };
+
+      socketConnection.on("message-user", handleMessageUser);
+      socketConnection.on("message", handleMessages);
+
+      return () => {
+        socketConnection.off("message-user", handleMessageUser);
+        socketConnection.off("message", handleMessages);
+      };
     }
-  }, [socketConnection, params?.userId, user]);
+  }, [socketConnection, params.userId]);
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -150,166 +156,148 @@ const MessagePage = () => {
       style={{ backgroundImage: `url(${backgroundImage})` }}
       className="bg-no-repeat bg-cover"
     >
-      <header className="sticky top-0 h-16 bg-white flex justify-between items-center px-4">
+      {/* Header */}
+
+      <header className="sticky top-0 h-16 bg-[#f3e8ff] dark:bg-[#1e1b2e] flex justify-between items-center px-4 ">
         <div className="flex items-center gap-4">
-          <Link to={"/message"} className="lg:hidden">
+          <Link
+            to="/message"
+            className="lg:hidden text-purple-600 dark:text-white"
+          >
             <FaAngleLeft size={25} />
           </Link>
+          <Avatar
+            width={40}
+            height={40}
+            imageUrl={dataUser?.profile_pic}
+            name={dataUser?.name}
+            userId={dataUser?._id}
+          />
           <div>
-            <Avatar
-              width={40}
-              height={40}
-              imageUrl={dataUser?.profile_pic}
-              name={dataUser?.name}
-              userId={dataUser?._id}
-            />
-          </div>
-          <div>
-            <h3 className="font-semibold text-lg my-0 text-ellipsis line-clamp-1">
+            <h3 className="font-semibold text-lg text-ellipsis line-clamp-1 dark:text-white">
               {dataUser?.name}
             </h3>
-            <p className="-my-2 text-sm">
+            <p className="text-sm">
               {dataUser.online ? (
-                <span className="text-primary">online</span>
+                <span className="text-green-500">online</span>
               ) : (
-                <span className="text-slate-400">offline</span>
+                <span className="text-gray-400">offline</span>
               )}
             </p>
           </div>
         </div>
-
-        <div>
-          <button className="cursor-pointer hover:text-primary">
-            <HiDotsVertical />
-          </button>
-        </div>
+        <button className="dark:text-white hover:text-purple-800">
+          <HiDotsVertical />
+        </button>
       </header>
 
-      {/***show all message */}
-      <section className="h-[calc(100vh-128px)] overflow-x-hidden overflow-y-scroll scrollbar relative bg-slate-200 bg-opacity-50">
-        {/**all message show here */}
-        <div className="flex flex-col gap-2 py-2 mx-2" ref={currentMessage}>
-          {allMessage.map((msg, index) => {
-            return (
-              <div
-                key={msg._id || index}
-                className={` p-1 py-1 rounded w-fit max-w-[280px] md:max-w-sm lg:max-w-md ${
-                  user._id === msg?.msgByUserId
-                    ? "ml-auto bg-teal-100"
-                    : "bg-white"
-                }`}
-              >
-                <div className="w-full relative">
-                  {msg?.imageUrl && (
-                    <img
-                      src={msg?.imageUrl}
-                      className="w-full h-full object-scale-down"
-                    />
-                  )}
-                  {msg?.videoUrl && (
-                    <video
-                      src={msg.videoUrl}
-                      className="w-full h-full object-scale-down"
-                      controls
-                    />
-                  )}
-                </div>
-                <p className="px-2">{msg.text}</p>
-                <p className="text-xs ml-auto w-fit">
-                  {moment(msg.createdAt).format("hh:mm")}
-                </p>
-              </div>
-            );
-          })}
+      {/* Messages */}
+      <section className="h-[calc(100vh-128px)] overflow-y-auto scrollbar dark:bg-[#111827] px-3 py-2">
+        <div className="flex flex-col gap-2" ref={currentMessage}>
+          {allMessage.map((msg, index) => (
+            <div
+              key={msg._id || index}
+              className={`rounded-lg px-3 py-2 shadow text-sm ${
+                user._id === msg?.msgByUserId
+                  ? "ml-auto bg-[#e2d6f3] text-black"
+                  : "bg-white dark:bg-[#1f2937] dark:text-white"
+              } max-w-[280px] md:max-w-sm lg:max-w-md`}
+            >
+              {msg?.imageUrl && (
+                <img
+                  src={msg?.imageUrl}
+                  className="w-full h-auto object-contain rounded"
+                />
+              )}
+              {msg?.videoUrl && (
+                <video
+                  src={msg.videoUrl}
+                  className="w-full h-auto object-contain rounded"
+                  controls
+                />
+              )}
+              <p className="mt-1">{msg.text}</p>
+              <p className="text-xs text-right text-gray-500 dark:text-gray-300">
+                {moment(msg.createdAt).format("hh:mm")}
+              </p>
+            </div>
+          ))}
         </div>
 
-        {/**upload Image display */}
-        {message.imageUrl && (
-          <div className="w-full h-full sticky bottom-0 bg-slate-700 bg-opacity-30 flex justify-center items-center rounded overflow-hidden">
-            <div
-              className="w-fit p-2 absolute top-0 right-0 cursor-pointer hover:text-red-600"
-              onClick={handleClearUploadImage}
-            >
-              <IoClose size={30} />
-            </div>
-            <div className="bg-white p-3">
-              <img
-                src={message.imageUrl}
-                alt="uploadImage"
-                className="aspect-square w-full h-full max-w-sm m-2 object-scale-down"
-              />
-            </div>
-          </div>
-        )}
-
-        {/**upload video display */}
-        {message.videoUrl && (
-          <div className="w-full h-full sticky bottom-0 bg-slate-700 bg-opacity-30 flex justify-center items-center rounded overflow-hidden">
-            <div
-              className="w-fit p-2 absolute top-0 right-0 cursor-pointer hover:text-red-600"
-              onClick={handleClearUploadVideo}
-            >
-              <IoClose size={30} />
-            </div>
-            <div className="bg-white p-3">
-              <video
-                src={message.videoUrl}
-                className="aspect-square w-full h-full max-w-sm m-2 object-scale-down"
-                controls
-                muted
-                autoPlay
-              />
+        {/* Preview - Image/Video Upload */}
+        {(message.imageUrl || message.videoUrl) && (
+          <div className="sticky bottom-0 left-0 w-full flex justify-center items-center bg-black bg-opacity-40 p-4 z-10">
+            <div className="relative bg-white rounded-lg shadow-lg p-4 dark:bg-gray-800">
+              <button
+                className="absolute top-2 right-2 text-red-600 hover:text-red-800"
+                onClick={
+                  message.imageUrl
+                    ? handleClearUploadImage
+                    : handleClearUploadVideo
+                }
+              >
+                <IoClose size={24} />
+              </button>
+              {message.imageUrl && (
+                <img
+                  src={message.imageUrl}
+                  className="w-full max-w-xs object-contain rounded"
+                />
+              )}
+              {message.videoUrl && (
+                <video
+                  src={message.videoUrl}
+                  className="w-full max-w-xs object-contain rounded"
+                  controls
+                  autoPlay
+                  muted
+                />
+              )}
             </div>
           </div>
         )}
 
         {loading && (
-          <div className="w-full h-full flex sticky bottom-0 justify-center items-center">
+          <div className="w-full flex justify-center items-center mt-4">
             <Loading />
           </div>
         )}
       </section>
 
-      {/**send message */}
-      <section className="h-16 bg-white flex items-center px-4">
-        <div className="relative ">
+      {/* Send Message Bar */}
+      <section className="h-16 bg-[#f3e8ff] dark:bg-[#1e1b2e] flex items-center px-4 shadow-md">
+        <div className="relative mr-3">
           <button
             onClick={handleUploadImageVideoOpen}
-            className="flex justify-center items-center w-11 h-11 rounded-full hover:bg-primary hover:text-white"
+            className="w-10 h-10 flex justify-center items-center bg-purple-200 hover:bg-purple-300 dark:bg-purple-800 dark:hover:bg-purple-700 dark:text-white rounded-full transition"
           >
-            <FaPlus size={20} />
+            <FaPlus size={18} />
           </button>
 
-          {/**video and image */}
+          {/* Upload menu */}
           {openImageVideoUpload && (
-            <div className="bg-white shadow rounded absolute bottom-14 w-36 p-2">
+            <div className="absolute bottom-14 left-0 bg-white dark:bg-gray-800 shadow-lg rounded-lg w-36 p-2 z-20">
               <form>
                 <label
                   htmlFor="uploadImage"
-                  className="flex items-center p-2 px-3 gap-3 hover:bg-slate-200 cursor-pointer"
+                  className="flex items-center gap-2 p-2 hover:bg-purple-100 dark:hover:bg-gray-700 cursor-pointer rounded"
                 >
-                  <div className="text-primary">
-                    <FaImage size={18} />
-                  </div>
-                  <p>Image</p>
+                  <FaImage className="text-purple-500" />
+                  <span>Image</span>
                 </label>
                 <label
                   htmlFor="uploadVideo"
-                  className="flex items-center p-2 px-3 gap-3 hover:bg-slate-200 cursor-pointer"
+                  className="flex items-center gap-2 p-2 hover:bg-purple-100 dark:hover:bg-gray-700 cursor-pointer rounded"
                 >
-                  <div className="text-purple-500">
-                    <FaVideo size={18} />
-                  </div>
-                  <p>Video</p>
+                  <FaVideo className="text-blue-500" />
+                  <span>Video</span>
                 </label>
-
                 <input
                   type="file"
                   id="uploadImage"
                   onChange={handleUploadImage}
                   className="hidden"
                 />
-
                 <input
                   type="file"
                   id="uploadVideo"
@@ -321,16 +309,21 @@ const MessagePage = () => {
           )}
         </div>
 
-        {/**input box */}
-        <form className="h-full w-full flex gap-2" onSubmit={handleSendMessage}>
+        <form
+          className="flex-1 flex items-center gap-2"
+          onSubmit={handleSendMessage}
+        >
           <input
             type="text"
-            placeholder="Type here message..."
-            className="py-1 px-4 outline-none w-full h-full"
+            placeholder="Type a message..."
+            className="flex-1 py-2 px-4 rounded-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-400 dark:focus:ring-purple-700"
             value={message.text}
             onChange={handleOnChange}
           />
-          <button className="text-primary hover:text-secondary">
+          <button
+            type="submit"
+            className=" dark:text-white hover:text-purple-800 dark:hover:text-purple-400 transition"
+          >
             <IoMdSend size={28} />
           </button>
         </form>
